@@ -9,17 +9,19 @@ import H4 from './componentes/StyleH4';
 import { DefaultButton } from './componentes/StyleButton';
 
 const opciones = [
-  { id: 0, nombre: "Piedra", icono: <img src={piedra} alt="Piedra"></img>, gana: [2] },
-  { id: 1, nombre: "Papel", icono: <img src={papel} alt="Papel"></img>, gana: [0] },
-  { id: 2, nombre: "Tijera", icono: <img src={tijera} alt="Tijera"></img>, gana: [1] },
+  { id: 0, nombre: "Piedra", icono: <img src={piedra} alt="Piedra" width={100} ></img>, gana: [2] },
+  { id: 1, nombre: "Papel", icono: <img src={papel} alt="Papel" width={100}></img>, gana: [0] },
+  { id: 2, nombre: "Tijera", icono: <img src={tijera} alt="Tijera" width={100}></img>, gana: [1] },
 ];
 
 
 const getResultado = (jugador, pc) => {
-  if (jugador === pc) { 
-    return 0;}
+  if (jugador === pc) {
+    return 0;
+  }
   if (opciones[jugador].gana.includes(pc)) {
-    return 1;}
+    return 1;
+  }
   return 2;
 };
 
@@ -57,7 +59,7 @@ function App() {
     setJugador(jugador);
     setDisabled(true);
     const aleatorio = Math.floor(Math.random() * 3);
-    //demora el tiempo de respuesta de la PC//
+
     setTimeout(() => {
       setPc(aleatorio);
     },
@@ -81,7 +83,8 @@ function App() {
         break;
       default:
         break;
-    }}, [resultado])
+    }
+  }, [resultado])
 
   useEffect(() => {
     if (contadorJugador === 3) {
@@ -89,8 +92,8 @@ function App() {
     }
     else if (contadorPc === 3) {
       alert("Perdiste")
-    }}, [contadorJugador, contadorPc])   
-
+    }
+  }, [contadorJugador, contadorPc])
 
   const reset = () => {
     setJugador(null);
@@ -114,66 +117,57 @@ function App() {
     setContadorPc(0);
   }
 
-
   return (
     <div className='juego'>
-      <div className='inicio'>
-        <H1> PIEDRA, PAPEL O TIJERAS </H1>
-      </div>
-      <div className='nombreJugador'>
-        <H4>Nombre del jugador</H4>
-        {nombre !== '' && <H4>{nombre}</H4>}
-        <Usuario trigger={timePopup} setTrigger={setTimePopup}>
-          <label>
-            <H4>Nombre: <input value={nombre} onChange={e => setNombre(e.target.value)} /></H4>
-          </label>
-        </Usuario>
-      </div>
-      <div className="Elija">
-        <h2> Elija su jugada, el primero en llegar a 3 victorias es el ganador</h2>
-      </div>
-      <div className='botonesEleccion'>
-        {opciones.map((opcion) => (
-         <button
-            key={opcion.id}
-            disabled={disabled}
-            onClick={() => handlePlay(opcion.id)}
-            title={opcion.nombre}
-          > {opcion.icono}</button>
-        ))}
-        {jugador !== null && (
-          <H4>{mensajeJugador}</H4>
-        )}
-        {pc !== null && (
-          <H4>{mensajePc}</H4>
-        )}
-        {resultado === 0 && <H4>Empate</H4>}
-        {resultado === 1 && <H4>Ganaste la ronda</H4>}
-        {resultado === 2 && <H4>Perdiste la ronda</H4>}
 
-        <div className="ganador">
-          <table style={{ margin: "0 auto" }}>
-            <tbody>
-              <tr>
-                <th id="resultado"><H4>RESULTADO</H4></th>
-              </tr>
-              <tr>
-                <td><H4>Jugador</H4></td>
-                <td id="contadorjugador">{contadorJugador}</td>
-              </tr>
-              <tr>
-                <td><H4>PC</H4></td>
-                <td id="contadorpc">{contadorPc}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        {contadorPc < 3 && contadorJugador < 3 && <DefaultButton onClick={reset}>Nueva ronda</DefaultButton>}
-        <br></br>
-        <br></br>
-        <DefaultButton onClick={nuevoJuego}>Nuevo juego</DefaultButton>
-      </div>
+      <H1> PIEDRA, PAPEL O TIJERAS </H1>
+
+      <H4>Nombre del jugador</H4>
+      {nombre !== '' && <H4>{nombre}</H4>}
+
+      <Usuario trigger={timePopup} setTrigger={setTimePopup}>
+        <label>
+          <H4>Nombre: <input value={nombre} onChange={e => setNombre(e.target.value)} /></H4>
+        </label>
+      </Usuario>
+
+      <H4> Elija su jugada, el primero en llegar a 3 victorias es el ganador</H4>
+
+      {opciones.map((opcion) => (
+        <button key={opcion.id} disabled={disabled} onClick={() => handlePlay(opcion.id)} title={opcion.nombre}
+        > {opcion.icono}</button>
+      ))}
+
+      {jugador !== null && (<H4>{mensajeJugador}</H4>)}
+
+      {pc !== null && (<H4>{mensajePc}</H4>)}
+
+      {resultado === 0 && <H4>Empate</H4>}
+      {resultado === 1 && <H4>Ganaste la ronda</H4>}
+      {resultado === 2 && <H4>Perdiste la ronda</H4>}
+
+      <table style={{ margin: "0 auto" }}>
+        <tbody>
+          <tr>
+            <th id="resultado"><H4>RESULTADO</H4></th>
+          </tr>
+          <tr>
+            <td><H4>Jugador</H4></td>
+            <td id="contadorjugador"><H4>{contadorJugador}</H4></td>
+          </tr>
+          <tr>
+            <td><H4>PC</H4></td>
+            <td id="contadorpc"><H4>{contadorPc}</H4></td>
+          </tr>
+        </tbody>
+      </table>
+
+      {contadorPc < 3 && contadorJugador < 3 && <DefaultButton onClick={reset}>Nueva ronda</DefaultButton>}
+      <br></br>
+      <br></br>
+      <DefaultButton onClick={nuevoJuego}>Nuevo juego</DefaultButton>
     </div>
+
   );
 }
 
