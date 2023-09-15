@@ -3,24 +3,28 @@ import { useState, useEffect } from 'react';
 import papel from './assets/img/papel.png';
 import piedra from './assets/img/piedra.png';
 import tijera from './assets/img/tijera.png';
+import Usuario from './componentes/Usuario';
+import H1 from './componentes/StyleH1';
+import H4 from './componentes/StyleH4';
+import { DefaultButton } from './componentes/StyleButton';
 
 const opciones = [
-  { id: 0, nombre: "Piedra", icono: <img src={piedra}></img>, gana: [2] },
-  { id: 1, nombre: "Papel", icono: <img src={papel}></img>, gana: [0] },
-  { id: 2, nombre: "Tijera", icono: <img src={tijera}></img>, gana: [1] },
+  { id: 0, nombre: "Piedra", icono: <img src={piedra} alt="Piedra"></img>, gana: [2] },
+  { id: 1, nombre: "Papel", icono: <img src={papel} alt="Papel"></img>, gana: [0] },
+  { id: 2, nombre: "Tijera", icono: <img src={tijera} alt="Tijera"></img>, gana: [1] },
 ];
 
+
 const getResultado = (jugador, pc) => {
-  if (jugador === pc) {
-    return 0;
-  }
+  if (jugador === pc) { 
+    return 0;}
   if (opciones[jugador].gana.includes(pc)) {
-    return 1;
-  }
+    return 1;}
   return 2;
 };
 
 function App() {
+  const [nombre, setNombre] = useState("");
   const [jugador, setJugador] = useState(null);
   const [pc, setPc] = useState(null);
   const [mensajeJugador, setMensajeJugador] = useState(null);
@@ -29,18 +33,25 @@ function App() {
   const [disabled, setDisabled] = useState(false);
   const [contadorPc, setContadorPc] = useState(0);
   const [contadorJugador, setContadorJugador] = useState(0);
+  const [timePopup, setTimePopup] = useState(false);
 
   useEffect(() => {
     if (jugador !== null) {
-      setMensajeJugador(`Elejiste ${opciones[jugador].icono} - ${opciones[jugador].nombre}`);
+      setMensajeJugador(`Elejiste ${opciones[jugador].nombre}`);
     }
   }, [jugador]);
 
   useEffect(() => {
     if (pc !== null) {
-      setMensajePc(`La Pc eligió ${opciones[pc].icono} - ${opciones[pc].nombre}`);
+      setMensajePc(`La Pc eligió ${opciones[pc].nombre}`);
     }
   }, [pc]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTimePopup(true);
+    }, 500);
+  }, [])
 
   const handlePlay = (jugador) => {
     setJugador(jugador);
@@ -59,6 +70,28 @@ function App() {
     clearTimeout();
   };
 
+  useEffect(() => {
+    debugger
+    switch (resultado) {
+      case 1:
+        setContadorJugador(contadorJugador + 1);
+        break;
+      case 2:
+        setContadorPc(contadorPc + 1);
+        break;
+      default:
+        break;
+    }}, [resultado])
+
+  useEffect(() => {
+    if (contadorJugador === 3) {
+      alert("Ganaste");
+    }
+    else if (contadorPc === 3) {
+      alert("Perdiste")
+    }}, [contadorJugador, contadorPc])   
+
+
   const reset = () => {
     setJugador(null);
     setPc(null);
@@ -68,20 +101,40 @@ function App() {
     setDisabled(false);
   }
 
+  const nuevoJuego = () => {
+    setJugador(null);
+    setPc(null);
+    setMensajeJugador(null);
+    setMensajePc(null);
+    setResultado(null);
+    setDisabled(false);
+    setNombre(null);
+    setTimePopup(true);
+    setContadorJugador(0);
+    setContadorPc(0);
+  }
+
+
   return (
     <div className='juego'>
       <div className='inicio'>
-        <h1> PIEDRA, PAPEL O TIJERAS </h1>
+        <H1> PIEDRA, PAPEL O TIJERAS </H1>
       </div>
       <div className='nombreJugador'>
-        <h5>Nombre del jugador</h5>
+        <H4>Nombre del jugador</H4>
+        {nombre !== '' && <H4>{nombre}</H4>}
+        <Usuario trigger={timePopup} setTrigger={setTimePopup}>
+          <label>
+            <H4>Nombre: <input value={nombre} onChange={e => setNombre(e.target.value)} /></H4>
+          </label>
+        </Usuario>
       </div>
       <div className="Elija">
         <h2> Elija su jugada, el primero en llegar a 3 victorias es el ganador</h2>
       </div>
       <div className='botonesEleccion'>
         {opciones.map((opcion) => (
-          <button
+         <button
             key={opcion.id}
             disabled={disabled}
             onClick={() => handlePlay(opcion.id)}
@@ -89,33 +142,36 @@ function App() {
           > {opcion.icono}</button>
         ))}
         {jugador !== null && (
-          <p>{mensajeJugador}</p>
+          <H4>{mensajeJugador}</H4>
         )}
         {pc !== null && (
-          <p>{mensajePc}</p>
+          <H4>{mensajePc}</H4>
         )}
-        {resultado === 0 && <p>Empate</p>}
-        {resultado === 1 && <p>Ganaste la ronda</p>}
-        {resultado === 2 && <p>Perdiste la ronda</p>}
+        {resultado === 0 && <H4>Empate</H4>}
+        {resultado === 1 && <H4>Ganaste la ronda</H4>}
+        {resultado === 2 && <H4>Perdiste la ronda</H4>}
 
         <div className="ganador">
           <table style={{ margin: "0 auto" }}>
             <tbody>
               <tr>
-                <th id="resultado">RESULTADO</th>
+                <th id="resultado"><H4>RESULTADO</H4></th>
               </tr>
               <tr>
-                <td>Jugador</td>
-                <td id="contadorjugador">{setContadorJugador}</td>
+                <td><H4>Jugador</H4></td>
+                <td id="contadorjugador">{contadorJugador}</td>
               </tr>
               <tr>
-                <td>PC</td>
-                <td id="contadorpc">{setContadorPc}</td>
+                <td><H4>PC</H4></td>
+                <td id="contadorpc">{contadorPc}</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <button onClick={reset}>Nueva ronda</button>
+        {contadorPc < 3 && contadorJugador < 3 && <DefaultButton onClick={reset}>Nueva ronda</DefaultButton>}
+        <br></br>
+        <br></br>
+        <DefaultButton onClick={nuevoJuego}>Nuevo juego</DefaultButton>
       </div>
     </div>
   );
