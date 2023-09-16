@@ -8,12 +8,15 @@ import H1 from './componentes/StyleH1';
 import H4 from './componentes/StyleH4';
 import { DefaultButton } from './componentes/StyleButton';
 
+//Objetos para eleccion y comparacion//
+
 const opciones = [
-  { id: 0, nombre: "Piedra", icono: <img src={piedra} alt="Piedra" width={100} ></img>, gana: [2] },
-  { id: 1, nombre: "Papel", icono: <img src={papel} alt="Papel" width={100}></img>, gana: [0] },
-  { id: 2, nombre: "Tijera", icono: <img src={tijera} alt="Tijera" width={100}></img>, gana: [1] },
+  { id: 0, nombre: "Piedra", icono: <img src={piedra} alt="Piedra" width={50} ></img>, gana: [2] },
+  { id: 1, nombre: "Papel", icono: <img src={papel} alt="Papel" width={50}></img>, gana: [0] },
+  { id: 2, nombre: "Tijera", icono: <img src={tijera} alt="Tijera" width={50}></img>, gana: [1] },
 ];
 
+//Compara las jugadas y da como resultado el ganador//
 
 const getResultado = (jugador, pc) => {
   if (jugador === pc) {
@@ -26,6 +29,9 @@ const getResultado = (jugador, pc) => {
 };
 
 function App() {
+
+  //Declaro todos los estados que voy a usar en el juego//
+
   const [nombre, setNombre] = useState("");
   const [jugador, setJugador] = useState(null);
   const [pc, setPc] = useState(null);
@@ -36,6 +42,60 @@ function App() {
   const [contadorPc, setContadorPc] = useState(0);
   const [contadorJugador, setContadorJugador] = useState(0);
   const [timePopup, setTimePopup] = useState(false);
+
+  //Funciones//
+  
+  //Ejecuta con boton nueva ronda//
+
+  const reset = () => {
+    setJugador(null);
+    setPc(null);
+    setMensajeJugador(null);
+    setMensajePc(null);
+    setResultado(null);
+    setDisabled(false);
+  }
+
+  //Ejecuta con boton nuevo juego//
+
+  const nuevoJuego = () => {
+    setJugador(null);
+    setPc(null);
+    setMensajeJugador(null);
+    setMensajePc(null);
+    setResultado(null);
+    setDisabled(false);
+    setNombre(null);
+    setTimePopup(true);
+    setContadorJugador(0);
+    setContadorPc(0);
+  }
+
+ //Ejecuta cuando cambia jugador y compara con PC, ademas realiza el timer para mostras elecciones//
+
+  const handlePlay = (jugador) => {
+    setJugador(jugador);
+    setDisabled(true);
+    const aleatorio = Math.floor(Math.random() * 3);
+    setTimeout(() => {
+      setPc(aleatorio);
+    },
+      1000);
+    setTimeout(() => {
+      setResultado(getResultado(jugador, aleatorio));
+    }, 2000);
+    clearTimeout();
+  };
+  
+   //Primer cambio con Efecto, se ejecuta despues de un tiempo, es el Popup//
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTimePopup(true);
+    }, 500);
+  }, [])
+
+   //Al cambiarse jugador, muesta la eleccion trayendo desde el objeto el campo nombre//
 
   useEffect(() => {
     if (jugador !== null) {
@@ -49,29 +109,8 @@ function App() {
     }
   }, [pc]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setTimePopup(true);
-    }, 500);
-  }, [])
-
-  const handlePlay = (jugador) => {
-    setJugador(jugador);
-    setDisabled(true);
-    const aleatorio = Math.floor(Math.random() * 3);
-
-    setTimeout(() => {
-      setPc(aleatorio);
-    },
-      1000);
-
-    setTimeout(() => {
-      setResultado(getResultado(jugador, aleatorio));
-    }, 2000);
-
-    clearTimeout();
-  };
-
+  //"Detiene" el codigo para evaluar el resultado y modificar el contador//
+ 
   useEffect(() => {
     debugger
     switch (resultado) {
@@ -86,6 +125,8 @@ function App() {
     }
   }, [resultado])
 
+  //Compara resultados parciales para dar el ganador//
+
   useEffect(() => {
     if (contadorJugador === 3) {
       alert("Ganaste");
@@ -94,28 +135,6 @@ function App() {
       alert("Perdiste")
     }
   }, [contadorJugador, contadorPc])
-
-  const reset = () => {
-    setJugador(null);
-    setPc(null);
-    setMensajeJugador(null);
-    setMensajePc(null);
-    setResultado(null);
-    setDisabled(false);
-  }
-
-  const nuevoJuego = () => {
-    setJugador(null);
-    setPc(null);
-    setMensajeJugador(null);
-    setMensajePc(null);
-    setResultado(null);
-    setDisabled(false);
-    setNombre(null);
-    setTimePopup(true);
-    setContadorJugador(0);
-    setContadorPc(0);
-  }
 
   return (
     <div className='juego'>
